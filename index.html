@@ -1,1 +1,139 @@
-Hi
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Racer Experiment Clone</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body { 
+            background-color: black; 
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .cblock {
+            display: block;
+            margin: 0 auto;
+        }
+
+        a:visited {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="cblock">RACER</h1>
+
+    <p class="cblock">
+        Inspired by the <a href="https://www.chrome.com/racer" target="_blank">RACER Chrome experiment</a>, 
+        I tried to develop my version of the RECER, in order to experiment with pure HTML5 and CANVAS.
+    </p>
+
+    <canvas id="mainCanvas" width="400" height="400">
+    </canvas>
+
+    <script type="text/javascript">
+        let canvas = document.getElementById('mainCanvas');
+        let ctx = canvas.getContext('2d');
+        let canvasmeta = {
+            'width': canvas.width,
+            'height': canvas.height,
+            'centerX': canvas.width / 2,
+            'centerY': canvas.height / 2,
+        };
+
+        const intervalId = setInterval(update, 100, ctx, canvasmeta);
+
+        function update(ctx, canvasmeta) {
+            let time = new Date().getTime(); //ms
+
+            let shapes = updateShapes(time, canvasmeta);
+            updateCanvas(ctx, canvasmeta, shapes);
+        };
+
+        timeStep = 0;
+        function updateShapes(time, cnvmeta) {
+            objs = [];
+            ++timeStep;
+
+            let c1 = { 'type': 'circle', 'centerX': cnvmeta.centerX, 'centerY': cnvmeta.centerY, 'radius': 120, 'color': 'rgba(6, 128, 207, 1)' };
+            degree = timeStep * -16  % 360 + 90;
+            let m1 = primitivePlaceOnCirconference(c1, degree);
+            objs.push(c1);
+            objs.push(m1);
+
+            let c2 = { 'type': 'circle', 'centerX': cnvmeta.centerX, 'centerY': cnvmeta.centerY, 'radius': 110, 'color': 'rgba(22, 133, 31, 0.3)' };
+            degree = timeStep * -13.8  % 360 + 90;
+            let m2 = primitivePlaceOnCirconference(c2, degree);
+            objs.push(c2);
+            objs.push(m2);
+
+            let c3 = { 'type': 'circle', 'centerX': cnvmeta.centerX, 'centerY': cnvmeta.centerY, 'radius': 100, 'color': 'rgba(244, 233, 10, 0.3)' };
+            degree = timeStep * -13.6  % 360 + 90;
+            let m3 = primitivePlaceOnCirconference(c3, degree);
+            objs.push(c3);
+            objs.push(m3);
+
+            let c4 = { 'type': 'circle', 'centerX': cnvmeta.centerX, 'centerY': cnvmeta.centerY, 'radius': 90, 'color': 'rgba(244, 99, 10, 0.3)' };
+            degree = timeStep * -13.4  % 360 + 90;
+            let m4 = primitivePlaceOnCirconference(c4, degree);
+            objs.push(c4);
+            objs.push(m4);
+
+            let c5 = { 'type': 'circle', 'centerX': cnvmeta.centerX, 'centerY': cnvmeta.centerY, 'radius': 80, 'color': 'rgba(229, 10, 14, 0.3)' };
+            degree = timeStep * -13.2  % 360 + 90;
+            let m5 = primitivePlaceOnCirconference(c5, degree);
+            objs.push(c5);
+            objs.push(m5);
+
+            return objs;
+        };
+
+        function primitivePlaceOnCirconference(circle, degree) {
+            let m = { 'type': 'cline', 'centerX': 0, 'centerY': 0, 'height': 16, 'width': 10, 'degree': 0 };
+            m.degree = degree;
+            m.centerX = circle.centerX - circle.radius * Math.cos(m.degree * Math.PI / 180);
+            m.centerY = circle.centerY - circle.radius * Math.sin(m.degree * Math.PI / 180);
+            m.color = circle.color;
+            return m;
+        };
+
+        function updateCanvas(ctx, canvasmeta, shapes) {
+            ctx.fillRect(0, 0, canvasmeta.width, canvasmeta.height); // clear canvas
+
+            objs.forEach(shape => {
+                if (shape.type == 'circle') {
+                    ctx.beginPath()
+                    ctx.arc(shape.centerX, shape.centerY, shape.radius, 0, 2*Math.PI, false);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = shape.color;
+                    ctx.stroke();
+                }
+
+                if (shape.type == 'cline') {
+                    ctx.beginPath()
+                    ctx.translate(shape.centerX, shape.centerY);
+                    ctx.rotate(shape.degree * Math.PI / 180);
+                    let x1 = 0;
+                    let y1 = -shape.height / 2;
+                    let x2 = 0;
+                    let y2 = +shape.height / 2;
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineWidth = shape.width;
+                    ctx.strokeStyle = shape.color;
+                    ctx.stroke();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0); // reset I matrix.
+                }
+            });
+        };
+
+    </script>
+    
+</body>
+</html>
